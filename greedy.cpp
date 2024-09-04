@@ -41,6 +41,7 @@ std::string heuristic(std::queue<std::string> chains, const int change_degree){
     int chain_size = chains.front().size();
     int num_chains = chains.size();
     int index, j, sub_chain_size;
+
     for (int i=0 ; i<num_chains ; i++){
         index = (i*change_degree) % chain_size;
         if(index > chain_size-change_degree){
@@ -51,6 +52,9 @@ std::string heuristic(std::queue<std::string> chains, const int change_degree){
                 j = 0;
                 while(sub_chain[i]!=alphabet[j]){
                     j++;
+                    if(j == 4){
+                        break;
+                    }
                 }
                 sub_chain[i] = alphabet[(j+2)%4];
             }
@@ -109,13 +113,13 @@ int main(){
     std::queue<std::string> chains = getDnaS(filename);
     
     auto start = std::chrono::high_resolution_clock::now();
-    std::string solution = heuristic(chains, 40);
+    std::string solution = heuristic(chains, 1);
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed = end - start;
     double elapsedTime = elapsed.count();
 
     // std::cout << solution << std::endl;
-    std::cout << checkSolution(chains, solution, 0.7) << " " << elapsedTime << std::endl;
+    std::cout << checkSolution(chains, solution, 0.85) << " " << elapsedTime << std::endl;
 
     return 0;
 }
