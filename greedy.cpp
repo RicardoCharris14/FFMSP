@@ -91,6 +91,44 @@ std::string heuristic(std::queue<std::string> chains, const int change_degree){
     return solution;
 }
 
+std::string greedy(std::queue<std::string> chains){
+    int numChains = chains.size();
+    int chainSize = chains.front().size() - 1;
+    int ocurrences[4][chainSize];
+
+    // LLena la matriz de ocurrencias
+    for(int i = 0; i < numChains; i++){
+        for(int j = 0; j < chainSize; j++){
+            if(chains.front()[j] == 'A'){
+                ocurrences[0][j]++;
+            }else if(chains.front()[j] == 'C'){
+                ocurrences[1][j]++;
+            }else if(chains.front()[j] == 'G'){
+                ocurrences[2][j]++;
+            }else if(chains.front()[j] == 'T'){
+                ocurrences[3][j]++;
+            }
+        }
+    }
+
+    std::string solution;
+
+    // Forma la solucion con las ocurrencias minimas
+    for(int i = 0; i < chainSize; i++){
+        int min = ocurrences[0][i];
+        int index = 0;
+        for(int j = 1; j < 4; j++){
+            if(ocurrences[j][i] < min){
+                min = ocurrences[j][i];
+                index = j;
+            }
+        }
+        solution += alphabet[index];
+    }
+
+    return solution;
+}
+
 double checkSolution(std::queue<std::string> chains, std::string solution, const float t){
     int chainSize = chains.front().size();
     int numChains = chains.size();
