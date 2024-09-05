@@ -1,6 +1,6 @@
 #include <iostream>
 #include <fstream>
-#include <queue>
+#include <vector>
 #include <chrono>
 
 const std::string alphabet = "ACGT";
@@ -15,9 +15,9 @@ int d(std::string str1, std::string str2){
     return distance;
 }
 
-std::queue<std::string> getDnaS(const std::string& filename){
+std::vector<std::string> getDnaS(const std::string& filename){
 
-    std::queue<std::string> dnaChains;
+    std::vector<std::string> dnaChains;
     std::string chain;
     
     std::ifstream file(filename);
@@ -27,18 +27,18 @@ std::queue<std::string> getDnaS(const std::string& filename){
     } else{
 
         while(std::getline(file, chain)){
-            dnaChains.push(chain);
+            dnaChains.push_back(chain);
         }
         return dnaChains;
 
     }
 }
 
-std::string heuristic(std::queue<std::string> chains, const int change_degree){
+std::string heuristic(std::vector<std::string> chains, const int change_degree){
 
     std::string solution;
     std::string sub_chain;
-    int chain_size = chains.front().size();
+    int chain_size = chains.front().size() - 1;
     int num_chains = chains.size();
     int index, j, sub_chain_size;
 
@@ -46,7 +46,7 @@ std::string heuristic(std::queue<std::string> chains, const int change_degree){
         index = (i*change_degree) % chain_size;
         if(index > chain_size-change_degree){
 
-            sub_chain = chains.front().substr(index, chain_size - index);
+            sub_chain = chains[i].substr(index, chain_size - index);
             sub_chain_size = sub_chain.size();
             for (int i=0; i < sub_chain_size; i++){
                 j = 0;
@@ -59,7 +59,7 @@ std::string heuristic(std::queue<std::string> chains, const int change_degree){
                 sub_chain[i] = alphabet[(j+2)%4];
             }
             solution.replace(index, chain_size - index, sub_chain);
-            sub_chain = chains.front().substr(0, change_degree - (chain_size - index));
+            sub_chain = chains[i].substr(0, change_degree - (chain_size - index));
             sub_chain_size = sub_chain.size();
             for (int i=0; i < sub_chain_size; i++){
                 j = 0;
@@ -72,7 +72,7 @@ std::string heuristic(std::queue<std::string> chains, const int change_degree){
 
         }else{
 
-            sub_chain = chains.front().substr(index, change_degree);
+            sub_chain = chains[i].substr(index, change_degree);
             sub_chain_size = sub_chain.size();
             for (int i=0; i < sub_chain_size; i++){
                 j = 0;
@@ -84,14 +84,28 @@ std::string heuristic(std::queue<std::string> chains, const int change_degree){
             solution.replace((i*change_degree) % chain_size, change_degree, sub_chain);
 
         }
-        
-        chains.pop();
     }
 
     return solution;
 }
 
-std::string greedy(std::queue<std::string> chains){
+double checkSolution(std::vector<std::string> chains, std::string solution, const float t){
+    int chainSize = chains.front().size();
+    int numChains = chains.size();
+    int threshold = t * chainSize;
+    int count = 0;
+    
+    for(int i=0; i < numChains; i++){
+        if(d(chains[i], solution) >= threshold){
+            count++;
+        }
+    }
+
+    double quality = (double)count / (double)numChains; 
+    return quality;
+}
+
+std::string greedy(std::vector<std::string> chains, const float t){
     int numChains = chains.size();
     int chainSize = chains.front().size() - 1;
     int ocurrences[4][chainSize];
@@ -99,14 +113,17 @@ std::string greedy(std::queue<std::string> chains){
     // LLena la matriz de ocurrencias
     for(int i = 0; i < numChains; i++){
         for(int j = 0; j < chainSize; j++){
-            if(chains.front()[j] == 'A'){
+            if(chains[i][j] == 'A'){
                 ocurrences[0][j]++;
-            }else if(chains.front()[j] == 'C'){
+            }else if(chains[i][j] == 'C'){
                 ocurrences[1][j]++;
-            }else if(chains.front()[j] == 'G'){
+            }else if(chains[i][j] == 'G'){
                 ocurrences[2][j]++;
-            }else if(chains.front()[j] == 'T'){
+            }else if(chains[i][j] == 'T'){
                 ocurrences[3][j]++;
+            }else {
+                std::cerr << "Error en la cadena" << std::endl;
+                exit(1);
             }
         }
     }
@@ -123,41 +140,30 @@ std::string greedy(std::queue<std::string> chains){
                 index = j;
             }
         }
-        solution += alphabet[index];
+        if (checkSolution(chains, solution + alphabet[index], t) >= checkSolution(chains, solution + alphabet[(index + 2) % 4], t)){
+            solution += alphabet[index];
+        } else {
+            solution += alphabet[(index + 2) % 4];
+        }
     }
-
     return solution;
 }
 
-double checkSolution(std::queue<std::string> chains, std::string solution, const float t){
-    int chainSize = chains.front().size();
-    int numChains = chains.size();
-    int threshold = t * chainSize;
-    int count = 0;
-    
-    for(int i=0; i < numChains; i++){
-        if(d(chains.front(), solution) >= threshold){
-            count++;
-        }
-        chains.pop();
-    }
-
-    double quality = (double)count / (double)numChains; 
-    return quality;
-}
 
 int main(){
     std::string filename = "../FFMS_all_instances/100-300-001.txt";
-    std::queue<std::string> chains = getDnaS(filename);
-    
+    std::vector<std::string> chains = getDnaS(filename);
+    float threshold = 0.7;
+
     auto start = std::chrono::high_resolution_clock::now();
-    std::string solution = heuristic(chains, 1);
+    std::string solution = heuristic(chains, 40);
+    //std::string solution = greedy(chains, threshold);
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed = end - start;
     double elapsedTime = elapsed.count();
 
-    // std::cout << solution << std::endl;
-    std::cout << checkSolution(chains, solution, 0.85) << " " << elapsedTime << std::endl;
+    std::cout << solution.length() << std::endl;
+    std::cout << checkSolution(chains, solution, threshold) << " " << elapsedTime << std::endl;
 
     return 0;
 }
