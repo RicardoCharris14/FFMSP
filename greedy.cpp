@@ -2,11 +2,15 @@
 #include <fstream>
 #include <vector>
 #include <chrono>
+#include <string>
+#include <cstring>
+#include <cstdlib>
 
 const std::string alphabet = "ACGT";
 
 int d(std::string str1, std::string str2){
-    int distance = 0, strSize = str1.size();
+    int distance = 0;
+    int strSize = str1.size() > str2.size() ? str2.size() : str1.size();
     for(int i=0; i<strSize; i++){
         if(str1[i] != str2[i]){
             distance++;
@@ -89,7 +93,7 @@ std::string heuristic(std::vector<std::string> chains, const int change_degree){
     return solution;
 }
 
-double checkSolution(std::vector<std::string> chains, std::string solution, const float t){
+int checkSolution(std::vector<std::string> chains, std::string solution, const float t){
     int chainSize = chains.front().size();
     int numChains = chains.size();
     int threshold = t * chainSize;
@@ -101,14 +105,16 @@ double checkSolution(std::vector<std::string> chains, std::string solution, cons
         }
     }
 
-    double quality = (double)count / (double)numChains; 
-    return quality;
+    //double quality = (double)count / (double)numChains; 
+    //return quality;
+    return count;
 }
 
-std::string greedy(std::vector<std::string> chains, const float t){
+std::string greedy(std::vector<std::string> chains, double t){
     int numChains = chains.size();
     int chainSize = chains.front().size() - 1;
-    int ocurrences[4][chainSize];
+    int ocurrences[4][chainSize] = {0};
+    std::string solution = "";
 
     // LLena la matriz de ocurrencias
     for(int i = 0; i < numChains; i++){
@@ -128,8 +134,9 @@ std::string greedy(std::vector<std::string> chains, const float t){
         }
     }
 
-    std::string solution;
-
+    std::vector<int> diferencias;
+    int threshold = t * chainSize;
+    
     // Forma la solucion con las ocurrencias minimas
     for(int i = 0; i < chainSize; i++){
         int min = ocurrences[0][i];
@@ -140,24 +147,58 @@ std::string greedy(std::vector<std::string> chains, const float t){
                 index = j;
             }
         }
-        if (checkSolution(chains, solution + alphabet[index], t) >= checkSolution(chains, solution + alphabet[(index + 2) % 4], t)){
-            solution += alphabet[index];
-        } else {
-            solution += alphabet[(index + 2) % 4];
-        }
+        solution += alphabet[index % 4];
+        
+        //if (checkSolution(chains, solution + alphabet[index], t) >= checkSolution(chains, solution + alphabet[(index + 2) % 4], t)){
+        //    solution += alphabet[index];
+        //} else {
+        //    solution += alphabet[(index + 2) % 4];
+        //}
+
+        //for (int j = 0; j < numChains; j++){
+        //    int dif = d(chains[j], solution);
+        //    diferencias.push_back(dif);
+        //    
+        //    if(dif >= threshold){
+        //        chains.erase(chains.cbegin() + j);
+        //    }
+        //    
+        //    if(i >= chains.size()){
+        //        break;
+        //    }
+        //}
     }
     return solution;
 }
 
+int main(int argc, char const *argv[]){
 
-int main(){
-    std::string filename = "../FFMS_all_instances/100-300-001.txt";
+     // Verifica que el número de argumentos sea correcto
+    if (argc != 5) {
+        std::cerr << "Uso incorrecto: " << argv[0] << " -i <instancia-problema> -th <threshold>" << std::endl;
+        return 1;
+    }
+
+    std::string filename;
+    double threshold;
+    // Iterar sobre los argumentos de la línea de comandos
+    for (int i = 1; i < argc; i++) {
+        if (strcmp(argv[i], "-i") == 0 && i + 1 < argc) {
+            filename = argv[++i]; // Captura la instancia del problema
+        } else if (strcmp(argv[i], "-th") == 0 && i + 1 < argc) {
+            threshold = atof(argv[++i]); // Captura el valor del threshold
+        } else {
+            std::cerr << "Argumento desconocido: " << argv[i] << std::endl;
+            return 1;
+        }
+    }
+
+    
     std::vector<std::string> chains = getDnaS(filename);
-    float threshold = 0.7;
 
     auto start = std::chrono::high_resolution_clock::now();
-    std::string solution = heuristic(chains, 40);
-    //std::string solution = greedy(chains, threshold);
+    //std::string solution = heuristic(chains, 40);
+    std::string solution = greedy(chains, threshold);
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed = end - start;
     double elapsedTime = elapsed.count();
