@@ -5,6 +5,7 @@
 #include <string>
 #include <cstring>
 #include <cstdlib>
+#include <random>
 
 const std::string alphabet = "ACGT";
 
@@ -110,7 +111,7 @@ int checkSolution(std::vector<std::string> chains, std::string solution, const f
     return count;
 }
 
-std::string greedy(std::vector<std::string> chains, double t){
+std::string greedy(std::vector<std::string> chains, double t, double a){
     int numChains = chains.size();
     int chainSize = chains.front().size() - 1;
     int ocurrences[4][chainSize] = {0};
@@ -134,39 +135,35 @@ std::string greedy(std::vector<std::string> chains, double t){
         }
     }
 
-    std::vector<int> diferencias;
     int threshold = t * chainSize;
-    
+
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<> dis(0, 100);
+    int alpha = a * 100;
+
     // Forma la solucion con las ocurrencias minimas
     for(int i = 0; i < chainSize; i++){
         int min = ocurrences[0][i];
         int index = 0;
-        for(int j = 1; j < 4; j++){
-            if(ocurrences[j][i] < min){
-                min = ocurrences[j][i];
-                index = j;
+        int random = dis(gen);
+        if(random <= alpha){
+            for(int j = 1; j < 4; j++){
+                if(ocurrences[j][i] < min){
+                    min = ocurrences[j][i];
+                    index = j;
+                }
+            }
+            if (checkSolution(chains, solution + alphabet[index], t) >= checkSolution(chains, solution + alphabet[(index + 1) % 4], t)){
+                solution += alphabet[index];
+            } else {
+                solution += alphabet[(index + 1) % 4];
             }
         }
-        solution += alphabet[index % 4];
-        
-        //if (checkSolution(chains, solution + alphabet[index], t) >= checkSolution(chains, solution + alphabet[(index + 2) % 4], t)){
-        //    solution += alphabet[index];
-        //} else {
-        //    solution += alphabet[(index + 2) % 4];
-        //}
-
-        //for (int j = 0; j < numChains; j++){
-        //    int dif = d(chains[j], solution);
-        //    diferencias.push_back(dif);
-        //    
-        //    if(dif >= threshold){
-        //        chains.erase(chains.cbegin() + j);
-        //    }
-        //    
-        //    if(i >= chains.size()){
-        //        break;
-        //    }
-        //}
+        else {
+            std::uniform_int_distribution<> random_dis(0, 3);
+            solution += alphabet[random_dis(gen)];
+        }
     }
     return solution;
 }
@@ -174,31 +171,33 @@ std::string greedy(std::vector<std::string> chains, double t){
 int main(int argc, char const *argv[]){
 
      // Verifica que el número de argumentos sea correcto
-    if (argc != 5) {
+    if (argc < 5) {
         std::cerr << "Uso incorrecto: " << argv[0] << " -i <instancia-problema> -th <threshold>" << std::endl;
         return 1;
     }
 
     std::string filename;
     double threshold;
+    double alpha = 1;
     // Iterar sobre los argumentos de la línea de comandos
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "-i") == 0 && i + 1 < argc) {
             filename = argv[++i]; // Captura la instancia del problema
         } else if (strcmp(argv[i], "-th") == 0 && i + 1 < argc) {
             threshold = atof(argv[++i]); // Captura el valor del threshold
+        } else if (strcmp(argv[i], "-a") == 0 && i + 1 < argc) {
+            alpha = atof(argv[++i]); // Captura el valor de alpha
         } else {
             std::cerr << "Argumento desconocido: " << argv[i] << std::endl;
             return 1;
         }
     }
 
-    
     std::vector<std::string> chains = getDnaS(filename);
 
     auto start = std::chrono::high_resolution_clock::now();
     //std::string solution = heuristic(chains, 40);
-    std::string solution = greedy(chains, threshold);
+    std::string solution = greedy(chains, threshold, alpha);
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed = end - start;
     double elapsedTime = elapsed.count();
