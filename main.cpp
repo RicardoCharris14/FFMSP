@@ -6,27 +6,31 @@
 #include <cstring>
 #include <cstdlib>
 #include <random>
+#include <algorithm>  
+#include <cctype>    
 #include "control_functions.h"
 #include "greedy1.h"
 #include "greedy2.h"
 
-std::vector<std::string> getDnaS(const std::string& filename){
-
+std::vector<std::string> getDnaS(const std::string& filename) {
     std::vector<std::string> dnaChains;
     std::string chain;
     
     std::ifstream file(filename);
-    if(!file.is_open()){
+    if (!file.is_open()) {
         std::cerr << "Error al abrir el archivo" << std::endl;
         exit(1);
-    } else{
+    }
 
-        while(std::getline(file, chain)){
+    while (std::getline(file, chain)) {
+        // Eliminar saltos de línea y otros espacios en blanco
+        chain.erase(std::remove_if(chain.begin(), chain.end(), ::isspace), chain.end());
+        if (!chain.empty()) {
             dnaChains.push_back(chain);
         }
-        return dnaChains;
-
     }
+
+    return dnaChains;
 }
 
 int main(int argc, char const *argv[]){
