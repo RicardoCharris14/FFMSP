@@ -2,7 +2,7 @@
 #include "control_functions.h"
 #include <random>
 #include <iostream>
-
+#include <chrono>
 
 std::string greedy1(std::vector<std::string> chains, double t, double a){
     int numChains = chains.size();
@@ -59,4 +59,34 @@ std::string greedy1(std::vector<std::string> chains, double t, double a){
         }
     }
     return solution;
+}
+
+std::string grasp(std::vector<std::string> chains, double t, double a, int time) {
+    std::string bestSolution = "";
+    int bestResult = 0; 
+    int count = 0;
+    auto start = std::chrono::steady_clock::now();
+    
+    while (true) {
+        std::string auxSol;
+        int auxRes = 0;
+        auxSol = greedy1(chains, t, a);
+        auxRes = checkSolution(chains, auxSol, t);
+        if (auxRes > bestResult){
+            bestSolution = auxSol;
+            bestResult = auxRes;
+            auto now = std::chrono::steady_clock::now();
+            std::chrono::duration<double> elapsed_seconds = now - start;
+            std::cout << auxRes << " " << elapsed_seconds.count() << std::endl;
+        }
+        count++;
+        auto now = std::chrono::steady_clock::now();
+        std::chrono::duration<double> elapsed_seconds = now - start;
+        if (elapsed_seconds.count() >= time) {
+            std::cout << "Se revisaron " << count << " soluciones" << std::endl;
+            break;
+        }
+    }
+
+    return bestSolution;
 }

@@ -44,6 +44,7 @@ int main(int argc, char const *argv[]){
     std::string filename;
     double threshold;
     double alpha = 1;
+    int time = 10;
     // Iterar sobre los argumentos de la línea de comandos
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "-i") == 0 && i + 1 < argc) {
@@ -52,6 +53,8 @@ int main(int argc, char const *argv[]){
             threshold = atof(argv[++i]); // Captura el valor del threshold
         } else if (strcmp(argv[i], "-a") == 0 && i + 1 < argc) {
             alpha = atof(argv[++i]); // Captura el valor de alpha
+        } else if (strcmp(argv[i], "-t") == 0 && i + 1 < argc){
+            time = atof(argv[++i]);
         } else {
             std::cerr << "Argumento desconocido: " << argv[i] << std::endl;
             return 1;
@@ -61,14 +64,13 @@ int main(int argc, char const *argv[]){
     std::vector<std::string> chains = getDnaS(filename);
 
     auto start = std::chrono::high_resolution_clock::now();
-    std::string solution = greedy2(chains, 40, alpha);
-    //std::string solution = greedy1(chains, threshold, alpha);
+    std::string solution = grasp(chains, threshold, alpha, time);
     auto end = std::chrono::high_resolution_clock::now();
     std::chrono::duration<double> elapsed = end - start;
     double elapsedTime = elapsed.count();
 
-    std::cout << solution.length() << std::endl;
-    std::cout << checkSolution(chains, solution, threshold) << " " << elapsedTime << std::endl;
+    //std::cout << solution.length() << std::endl;
+    //std::cout << checkSolution(chains, solution, threshold) << " " << elapsedTime << std::endl;
 
     return 0;
 }
