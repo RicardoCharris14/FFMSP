@@ -4,7 +4,7 @@
 #include <iostream>
 #include <chrono>
 
-std::string greedy1(std::vector<std::string> chains, double t, double a){
+std::string greedy1(std::vector<std::string> chains, double t, double a = 1){
     int numChains = chains.size();
     int chainSize = chains.front().size();
     int ocurrences[4][chainSize] = {0};
@@ -61,12 +61,19 @@ std::string greedy1(std::vector<std::string> chains, double t, double a){
     return solution;
 }
 
-std::string grasp(std::vector<std::string> chains, double t, double a, int time) {
+std::string grasp1(std::vector<std::string> chains, double t, double a, int time) {
     std::string bestSolution = "";
     int bestResult = 0; 
+    double bestResultTime;
     int count = 0;
     auto start = std::chrono::steady_clock::now();
     
+    bestSolution = greedy1(chains, t);
+    bestResult = checkSolution(chains, bestSolution, t);
+    auto now = std::chrono::steady_clock::now();
+    std::chrono::duration<double> elapsed_seconds = now - start;
+    bestResultTime = elapsed_seconds.count();
+
     while (true) {
         std::string auxSol;
         int auxRes = 0;
@@ -77,12 +84,14 @@ std::string grasp(std::vector<std::string> chains, double t, double a, int time)
             bestResult = auxRes;
             auto now = std::chrono::steady_clock::now();
             std::chrono::duration<double> elapsed_seconds = now - start;
-            std::cout << auxRes << " " << elapsed_seconds.count() << std::endl;
+            bestResultTime = elapsed_seconds.count();
+            std::cout << bestResult << " " << bestResultTime << std::endl;
         }
         count++;
         auto now = std::chrono::steady_clock::now();
         std::chrono::duration<double> elapsed_seconds = now - start;
         if (elapsed_seconds.count() >= time) {
+            std::cout << bestResult << " " << bestResultTime << std::endl;
             std::cout << "Se revisaron " << count << " soluciones" << std::endl;
             break;
         }
