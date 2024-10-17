@@ -61,6 +61,7 @@ std::string greedy1(std::vector<std::string> chains, double t, double a = 1){
     return solution;
 }
 
+std::string localSearch(std::vector<std::string> chains, double t, std::string string);
 std::string grasp1(std::vector<std::string> chains, double t, double a, int time) {
     std::string bestSolution = "";
     int bestResult = 0; 
@@ -86,16 +87,49 @@ std::string grasp1(std::vector<std::string> chains, double t, double a, int time
             std::chrono::duration<double> elapsed_seconds = now - start;
             bestResultTime = elapsed_seconds.count();
             std::cout << bestResult << " " << bestResultTime << std::endl;
+            bestSolution = localSearch(chains, t, bestSolution);
+            bestResult = checkSolution(chains, bestSolution, t);
         }
         count++;
         auto now = std::chrono::steady_clock::now();
         std::chrono::duration<double> elapsed_seconds = now - start;
         if (elapsed_seconds.count() >= time) {
-            std::cout << bestResult << " " << bestResultTime << std::endl;
+            std::cout << checkSolution(chains, bestSolution, t) << " " << bestResultTime << std::endl;
             std::cout << "Se revisaron " << count << " soluciones" << std::endl;
             break;
         }
     }
 
     return bestSolution;
+}
+
+std::string localSearch(std::vector<std::string> chains, double t, std::string string) {
+    int size = string.size();
+    std::string aux = string;
+    std::string result = string;
+    int bestResult = checkSolution(chains, result, t);
+
+    auto start = std::chrono::steady_clock::now();
+    auto now = std::chrono::steady_clock::now();
+    std::chrono::duration<double> elapsed_seconds = now - start;
+    double bestResultTime = elapsed_seconds.count();
+
+    for(int i = 0; i < size; i++){
+        for(char a: alphabet){
+            aux[i] = a;
+            int auxSol = checkSolution(chains, aux, t);
+            if(auxSol > bestResult){
+                bestResult = auxSol;
+                result = aux;
+                
+                auto now = std::chrono::steady_clock::now();
+                std::chrono::duration<double> elapsed_seconds = now - start;
+                bestResultTime = elapsed_seconds.count();
+                
+                std::cout << bestResult << " " << bestResultTime << std::endl;
+                break;
+            }
+        }
+    }
+    return result;
 }
