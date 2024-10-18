@@ -62,15 +62,6 @@ int main(int argc, char const *argv[]){
     }
 
     std::vector<std::string> chains = getDnaS(filename);
-
-    auto start = std::chrono::high_resolution_clock::now();
-    std::string solution = grasp1(chains, threshold, alpha, time);
-    auto end = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<double> elapsed = end - start;
-    double elapsedTime = elapsed.count();
-
-    //std::cout << solution.length() << std::endl;
-    //std::cout << checkSolution(chains, solution, threshold) << " " << elapsedTime << std::endl;
-
+    std::string solution = soloBusquedaLocal(chains, threshold, alpha, time);
     return 0;
 }
