@@ -43,7 +43,7 @@ int main(int argc, char const *argv[]){
 
     std::string filename;
     double threshold;
-    double alpha = 0.5;
+    double alpha = 1;
     int time = 10;
     // Iterar sobre los argumentos de la línea de comandos
     for (int i = 1; i < argc; i++) {
@@ -62,6 +62,8 @@ int main(int argc, char const *argv[]){
     }
 
     std::vector<std::string> chains = getDnaS(filename);
-    std::string solution = soloBusquedaLocal(chains, threshold, alpha, time);
+    std::string solution = grasp1(chains, time, threshold, alpha);
+
+    //std::cout << checkSolution(chains, solution, threshold) << std::endl;
     return 0;
 }

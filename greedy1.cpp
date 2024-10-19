@@ -4,7 +4,7 @@
 #include <iostream>
 #include <chrono>
 
-std::string greedy1(std::vector<std::string> chains, double t, double a = 1){
+std::string greedy1(std::vector<std::string> chains, double t, double a){
     int numChains = chains.size();
     int chainSize = chains.front().size();
     int ocurrences[4][chainSize] = {0};
@@ -61,19 +61,30 @@ std::string greedy1(std::vector<std::string> chains, double t, double a = 1){
     return solution;
 }
 
-std::string localSearch(std::vector<std::string> chains, double t, std::string string);
-std::string grasp1(std::vector<std::string> chains, double t, double a, int time) {
+std::string grasp1(std::vector<std::string> chains, int time, double t, double a) {
+    std::pair<std::string, double> solutionTime;
     std::string bestSolution = "";
-    int bestResult = 0; 
-    double bestResultTime;
+    std::string posibleSolution;
+    int bestResult = 0, posibleResult; 
+    double bestResultTime, posibleTime;
     int count = 0;
     auto start = std::chrono::steady_clock::now();
     
+    // Calcula solucion con greedy1 determinista
     bestSolution = greedy1(chains, t);
     bestResult = checkSolution(chains, bestSolution, t);
+
     auto now = std::chrono::steady_clock::now();
     std::chrono::duration<double> elapsed_seconds = now - start;
     bestResultTime = elapsed_seconds.count();
+    std::cout << bestResult << " " << bestResultTime << std::endl;
+
+    // Hace busqueda local sobre la solucion determinista encontrada con greedy1
+    solutionTime = localSearch(chains, t, bestSolution, bestResultTime);
+    posibleSolution = solutionTime.first;
+    posibleResult = checkSolution(chains, posibleSolution, t);
+
+    posibleTime = solutionTime.second;
 
     while (true) {
         std::string auxSol;
@@ -81,21 +92,37 @@ std::string grasp1(std::vector<std::string> chains, double t, double a, int time
         auxSol = greedy1(chains, t, a);
         auxRes = checkSolution(chains, auxSol, t);
         if (auxRes > bestResult){
+
             bestSolution = auxSol;
             bestResult = auxRes;
-            auto now = std::chrono::steady_clock::now();
-            std::chrono::duration<double> elapsed_seconds = now - start;
+
+            now = std::chrono::steady_clock::now();
+            elapsed_seconds = now - start;
             bestResultTime = elapsed_seconds.count();
             std::cout << bestResult << " " << bestResultTime << std::endl;
-            bestSolution = localSearch(chains, t, bestSolution);
-            bestResult = checkSolution(chains, bestSolution, t);
+
+            solutionTime = localSearch(chains, t, bestSolution, bestResultTime);
+            auxSol = solutionTime.first;
+            auxRes = checkSolution(chains, auxSol, t);
+
+            if(auxRes > posibleResult){
+
+                posibleTime = solutionTime.second;
+
+                posibleSolution = auxSol;
+                posibleResult = auxRes;
+            }
         }
         count++;
         auto now = std::chrono::steady_clock::now();
         std::chrono::duration<double> elapsed_seconds = now - start;
         if (elapsed_seconds.count() >= time) {
-            std::cout << checkSolution(chains, bestSolution, t) << " " << bestResultTime << std::endl;
-            std::cout << "Se revisaron " << count << " soluciones" << std::endl;
+            if(posibleResult > bestResult){
+                bestResult = posibleResult;
+                bestSolution = posibleSolution;
+                bestResultTime = posibleTime;
+            }
+            std::cout << bestResult << " " << bestResultTime << std::endl;
             break;
         }
     }
@@ -103,35 +130,36 @@ std::string grasp1(std::vector<std::string> chains, double t, double a, int time
     return bestSolution;
 }
 
-std::string localSearch(std::vector<std::string> chains, double t, std::string string) {
-    int size = string.size();
-    std::string aux = string;
-    std::string result = string;
-    int bestResult = checkSolution(chains, result, t);
-
+std::pair<std::string, double> localSearch(std::vector<std::string> chains, double t, std::string string, double time) {
     auto start = std::chrono::steady_clock::now();
-    auto now = std::chrono::steady_clock::now();
-    std::chrono::duration<double> elapsed_seconds = now - start;
-    double bestResultTime = elapsed_seconds.count();
+    std::pair<std::string, double> retorno;
+    double solTime;
+    int size = string.size();
+    std::string auxSol;
+    std::string bestSolution = string;
+    int bestResult = checkSolution(chains, bestSolution, t);
 
     for(int i = 0; i < size; i++){
+        auxSol = bestSolution;
         for(char a: alphabet){
-            aux[i] = a;
-            int auxSol = checkSolution(chains, aux, t);
-            if(auxSol > bestResult){
-                bestResult = auxSol;
-                result = aux;
-                
+            auxSol[i] = a;
+            int auxRes = checkSolution(chains, auxSol, t);
+            if(auxRes > bestResult){
+
                 auto now = std::chrono::steady_clock::now();
                 std::chrono::duration<double> elapsed_seconds = now - start;
-                bestResultTime = elapsed_seconds.count();
-                
-                std::cout << bestResult << " " << bestResultTime << std::endl;
+                solTime = elapsed_seconds.count() + time;
+                bestResult = auxRes;
+                bestSolution = auxSol;
+                std::cout << bestResult << " " << solTime << std::endl;
                 break;
             }
         }
     }
-    return result;
+
+    retorno.first = bestSolution;
+    retorno.second = solTime;
+    return retorno;
 }
 
 std::string soloBusquedaLocal(std::vector<std::string> chains, double t, double a, int time) {
