@@ -11,26 +11,26 @@
 
 // Función para inicializar la población
 std::vector<std::string> iniciarPoblacion(const std::vector<std::string> chains, double t, double a, int populationSize) {
-    std::vector<std::string> population;
+    std::vector<std::string> poblacion;
     for (int i = 0; i < populationSize; i++) {
-        population.push_back(greedy1(chains, t, a));
+        poblacion.push_back(greedy1(chains, t, a));
     }
-    return population;
+    return poblacion;
 }
 
 // Selección
-std::string torneo(const std::vector<std::string> population, const std::vector<int> fitnesses, int size) {
+std::string torneo(const std::vector<std::string> poblacion, const std::vector<int> fitnesses, int size) {
     std::random_device rd;
     std::mt19937 gen(rd());
-    std::uniform_int_distribution<> dis(0, population.size() - 1);
+    std::uniform_int_distribution<> dis(0, poblacion.size() - 1);
 
-    std::string best = population[dis(gen)];
+    std::string best = poblacion[dis(gen)];
     int bestFitness = fitnesses[0];
 
     for (int i = 1; i < size; i++) {
         int index = dis(gen);
         if (fitnesses[index] > bestFitness) {
-            best = population[index];
+            best = poblacion[index];
             bestFitness = fitnesses[index];
         }
     }
@@ -61,7 +61,7 @@ void mutar(std::string& solution) {
 }
 
 // Algoritmo genético
-std::string AlgoritmoEvolutivo(std::vector<std::string> chains, int tiempoMaximo, double threshold, double determinismo, int populationSize) {
+std::string AlgoritmoEvolutivo(std::vector<std::string> chains, int tiempoMaximo, double threshold, double determinismo, int populationSize, bool tuning) {
     int tournamentSize = 5;
     double mutationRate = 0.1;
 
@@ -69,6 +69,7 @@ std::string AlgoritmoEvolutivo(std::vector<std::string> chains, int tiempoMaximo
     std::vector<int> fitnesses(populationSize);
 
     auto start = std::chrono::steady_clock::now();
+    std::chrono::duration<double> elapsed_seconds;
     int bestFitness = -1;
     std::string bestSolution;
     double bestTime = 0;
@@ -84,10 +85,11 @@ std::string AlgoritmoEvolutivo(std::vector<std::string> chains, int tiempoMaximo
             bestFitness = fitnesses[maxIndex];
             bestSolution = population[maxIndex];
             auto now = std::chrono::steady_clock::now();
-            auto elapsed = now - start;
-            bestTime = elapsed.count();
+            elapsed_seconds = now - start;
+            bestTime = elapsed_seconds.count();
             // Mostrar mejora de solución
-            std::cout << bestFitness << " " << bestTime << std::endl;
+            if(!tuning)
+                std::cout << bestFitness << " " << bestTime << std::endl;
         }
 
         std::vector<std::string> newPopulation;
@@ -106,8 +108,11 @@ std::string AlgoritmoEvolutivo(std::vector<std::string> chains, int tiempoMaximo
 
         population = newPopulation;
         auto now = std::chrono::steady_clock::now();        
-        auto elapsed = now - start;
-        if (elapsed.count() >= tiempoMaximo) break;
+        elapsed_seconds = now - start;
+        if (elapsed_seconds.count() >= tiempoMaximo) {
+            std::cout << bestFitness << " " << bestTime << std::endl;
+            break;
+        }
     }
 
     // Encontrar mejor solución final
@@ -147,6 +152,7 @@ int main(int argc, char const *argv[])
     double alpha = 1;
     int time = 10;
     int psize;
+    bool tuning = false;
     // Iterar sobre los argumentos de la línea de comandos
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "-i") == 0 && i + 1 < argc) {
@@ -159,6 +165,8 @@ int main(int argc, char const *argv[])
             alpha = atof(argv[++i]);
         } else if (strcmp(argv[i], "-psize") == 0 && i + 1 < argc){
             psize = atoi(argv[++i]);
+        } else if (strcmp(argv[i], "-tuning") == 0) {
+            tuning = true;
         } else {
             std::cerr << "Argumento desconocido: " << argv[i] << std::endl;
             return 1;
@@ -166,7 +174,6 @@ int main(int argc, char const *argv[])
     }
 
     std::vector<std::string> chains = getDnaS(filename);
-    std::string solution = AlgoritmoEvolutivo(chains, time, threshold, alpha, psize);
-    std::cout << checkSolution(chains, solution, threshold) << std::endl;
+    std::string solution = AlgoritmoEvolutivo(chains, time, threshold, alpha, psize, tuning);
     return 0;
 }
