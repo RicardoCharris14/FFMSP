@@ -61,14 +61,12 @@ void mutar(std::string& solution) {
 }
 
 // Algoritmo genético
-std::string AlgoritmoEvolutivo(std::vector<std::string> chains, int tiempoMaximo, double threshold, double determinismo, int populationSize, bool tuning) {
-    int tournamentSize = 5;
-    double mutationRate = 0.1;
-
+std::string AlgoritmoEvolutivo(std::vector<std::string> chains, int tiempoMaximo, double threshold, double determinismo, int populationSize,int tournamentSize, double mutationRate, bool tuning) {
+    auto start = std::chrono::steady_clock::now();
+    
     std::vector<std::string> population = iniciarPoblacion(chains, threshold, determinismo, populationSize);
     std::vector<int> fitnesses(populationSize);
 
-    auto start = std::chrono::steady_clock::now();
     std::chrono::duration<double> elapsed_seconds;
     int bestFitness = -1;
     std::string bestSolution;
@@ -142,8 +140,8 @@ std::vector<std::string> getDnaS(const std::string& filename) {
 
 int main(int argc, char const *argv[])
 {
-    if (argc < 7) {
-        std::cerr << "Uso incorrecto: " << argv[0] << " -i <instancia-problema> -t <t max en seg> -th <threshold>" << std::endl;
+    if (argc < 15) {
+        std::cerr << "Uso incorrecto: " << argv[0] << " -i <instancia-problema> -t <t max en seg> -th <threshold> -a <grado-determinismo> -psize <size-poblacion> -tsize <size-torneo> -mrate <grado-mutacion>" << std::endl;
         return 1;
     }
 
@@ -152,6 +150,8 @@ int main(int argc, char const *argv[])
     double alpha = 1;
     int time = 10;
     int psize;
+    int tournamentSize = 5;
+    double mutationRate = 0.05;
     bool tuning = false;
     // Iterar sobre los argumentos de la línea de comandos
     for (int i = 1; i < argc; i++) {
@@ -165,6 +165,10 @@ int main(int argc, char const *argv[])
             alpha = atof(argv[++i]);
         } else if (strcmp(argv[i], "-psize") == 0 && i + 1 < argc){
             psize = atoi(argv[++i]);
+        } else if (strcmp(argv[i], "-tsize") == 0 && i + 1 < argc){
+            tournamentSize = atoi(argv[++i]);  
+        } else if (strcmp(argv[i], "-mrate") == 0 && i + 1 < argc){
+            mutationRate = atof(argv[++i]);
         } else if (strcmp(argv[i], "-tuning") == 0) {
             tuning = true;
         } else {
@@ -174,6 +178,6 @@ int main(int argc, char const *argv[])
     }
 
     std::vector<std::string> chains = getDnaS(filename);
-    std::string solution = AlgoritmoEvolutivo(chains, time, threshold, alpha, psize, tuning);
+    std::string solution = AlgoritmoEvolutivo(chains, time, threshold, alpha, psize, tournamentSize, mutationRate, tuning);
     return 0;
 }
