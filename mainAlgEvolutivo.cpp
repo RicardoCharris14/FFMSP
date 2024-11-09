@@ -108,7 +108,8 @@ std::string AlgoritmoEvolutivo(std::vector<std::string> chains, int tiempoMaximo
         auto now = std::chrono::steady_clock::now();        
         elapsed_seconds = now - start;
         if (elapsed_seconds.count() >= tiempoMaximo) {
-            std::cout << bestFitness << " " << bestTime << std::endl;
+            if(tuning) std::cout << bestFitness * -1 << std::endl;
+            else std::cout << bestFitness << " " << bestTime << std::endl;
             break;
         }
     }
