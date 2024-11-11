@@ -3,7 +3,7 @@ EXEC = algEvolutivo
 # Compilador
 CXX = g++
 
-SRC = mainAlgEvolutivo.cpp control_functions.cpp greedy1.cpp
+SRC = src/mainAlgEvolutivo.cpp src/control_functions.cpp src/greedy1.cpp
 OBJ = $(SRC:.cpp=.o)
 
 $(EXEC): $(OBJ)
