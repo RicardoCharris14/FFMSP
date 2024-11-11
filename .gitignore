@@ -1,3 +1,4 @@
 .vscode
-*.txt
+.txt
 *.exe
+/FFMS_all_instances

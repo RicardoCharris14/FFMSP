@@ -1,0 +1,79 @@
+#!/bin/bash
+###############################################################################
+# This script is the command that is executed every run.
+# Check the examples in examples/
+#
+# This script is run in the execution directory (execDir, --exec-dir).
+#
+# PARAMETERS:
+# $1 is the candidate configuration number
+# $2 is the instance ID
+# $3 is the seed
+# $4 is the instance name
+# The rest ($* after `shift 4') are parameters to the run
+#
+# RETURN VALUE:
+# This script should print one numerical value: the cost that must be minimized.
+# Exit with 0 if no error, with 1 in case of error
+###############################################################################
+error() {
+    echo "`TZ=UTC date`: $0: error: $@"
+    cat $tmpfile
+    rm -f $tmpfile
+    exit 1
+}
+
+tmpfile=$(mktemp)
+EXE=../algEvolutivo
+FIXED_PARAMS="-t 60 -th 0.8 -tuning "
+CANDIDATE=$1
+INSTANCEID=$2
+SEED=$3
+INSTANCE=$4
+shift 4 || error "Not enough parameters"
+CAND_PARAMS=$*
+
+STDOUT=c${CANDIDATE}-${INSTANCEID}-${SEED}.stdout
+STDERR=c${CANDIDATE}-${INSTANCEID}-${SEED}.stderr
+
+# modify with the SLURM submission template
+sbatch 1> $tmpfile <<EOF
+#!/bin/bash
+#SBATCH --job-name=irace-$PPID-$CANDIDATE-${INSTANCEID}-${SEED}
+#SBATCH --output=test-$CANDIDATE-${INSTANCEID}-${SEED}.out
+##SBATCH --time=0-5:00:00
+##SBATCH --ntasks=1
+#SBATCH --partition=main
+#SBATCH --exclude=luthier[04-10,21-30]
+#SBATCH --mem 8G # Memory request of 7 GB
+#SBATCH -n1 # one core
+
+
+##SBATCH --cpus-per-task=1
+##SBATCH --mem-per-cpu=8000
+##SBATCH --constraint="node109|node110|node111|node313|node314|node703|node704|node705|node706|node707|node708"
+##module load shared slurm
+##module load intel/compiler/64/14.0/2013_sp1.1.106
+#echo "Start!"
+TMP=\$(mktemp -d)
+srun $EXE ${FIXED_PARAMS} -i $INSTANCE ${CAND_PARAMS} 1> \$TMP/$STDOUT 2> \$TMP/$STDERR
+RET=\$?
+echo "OK" >& 2
+mv \$TMP/* ./
+rmdir -p \$TMP &> /dev/null
+exit \$RET
+EOF
+
+rc=$?
+if [[ $rc == 0 ]]; then
+    JOBID=$(grep -o -e "Submitted batch job [^ ]\+" $tmpfile | cut -f4 -d ' ')
+    if ! [[ "$JOBID" =~ ^[_-.@0-9A-Za-z]+$ ]] ; then
+        error "$0: cannot parse jobID from the output of sbatch!"
+    fi
+    echo "$JOBID"
+    rm -f $tmpfile
+    exit $rc
+else
+    error "$0: sbatch failed!"
+fi
+
