@@ -1,0 +1,2 @@
+srun: error: luthier19: task 0: Exited with exit code 1
+Uso incorrecto: /home/shared/sisadapt2/FFMSP/tuning/../algEvolutivo -i <instancia-problema> -t <t max en seg> -th <threshold> -a <grado-determinismo> -psize <size-poblacion> -tsize <size-torneo> -mrate <grado-mutacion>
