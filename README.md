@@ -8,18 +8,33 @@ Proyecto semestral para el "Far From Most Strings Problem"
 ### Instrucciones de compilación y ejecución:
 
 Compilar: 
-```sh
-g++ -o greedy main.cpp greedy1.cpp control_functions.cpp
+
+Para la compilacion del programa se puede usar
+```bash
+g++ -o algEvolutivo mainAlgEvolutivo.cpp greedy1.cpp control_functions.cpp
+```
+o alternativamente
+
+```bash
+make
 ```
 
-Si se quiere ejecutar sin aleatoriedad, usar:
-```sh
-<archivo_ejecutable> -i <path_dataset> -th <threshold>
+Para ejecutar el programa usar 
+
+```bash
+./algEvolutivo -i <instancia-problema> -t <t max en seg> -th <threshold> -a <grado-determinismo> -psize <size-poblacion>  -tsize <size-torneo> -mrate <grado-mutacion> -tuning <para activar el tuning>
 ```
 
-Si se quiere ejecutar con aleatoriedad, usar:
-```sh
-<archivo_ejecutable> -i <path_dataset> -th <threshold> -a <grado_determinismno>
-```
-Donde, archivo_ejecutable, es el archivo ejecutable producto de la compilacion, path_dataset, es el path al dataset a usar, threshold, es el grado de coincidencia entre 0 y 1 que se le pide a la solucion respecto a las cadenas del dataset, grado_determinismo, numero entre 0 y 1, donde 1 es perfectamente determinista y 0 es perfectamente aleatorio.
+Ejemplos de uso:
 
+Sin tuning:
+
+```bash
+./algEvolutivo -i 100-300-001.txt -th 0.8 -t 10 -a 0.96 -psize 50 -tsize 5 -mrate 0.05
+```
+
+Con tuning:
+
+```bash
+./algEvolutivo -i 100-300-001.txt -th 0.8 -t 10 -a 0.96 -psize 50 -tsize 5 -mrate 0.05 -tuning
+```
