@@ -1,4 +1,7 @@
 .vscode
 *.exe
 *.o
+*.out
+*.stdout
+*.stderr
 /FFMS_all_instances
