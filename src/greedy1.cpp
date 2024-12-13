@@ -47,11 +47,7 @@ std::string greedy1(std::vector<std::string> chains, double t, double a){
                     index = j;
                 }
             }
-            if (checkSolution(chains, solution + alphabet[index], t) >= checkSolution(chains, solution + alphabet[(index + 1) % 4], t)){
-                solution += alphabet[index];
-            } else {
-                solution += alphabet[(index + 1) % 4];
-            }
+            solution += alphabet[index];
         }
         else {
             std::uniform_int_distribution<> random_dis(0, 3);
