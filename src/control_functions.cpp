@@ -1,5 +1,7 @@
 #include "control_functions.h"
 #include <iostream>
+#include <fstream>
+#include <algorithm>
 
 int d(std::string str1, std::string str2){
     int distance = 0;
@@ -27,4 +29,25 @@ int checkSolution(std::vector<std::string> chains, std::string solution, const f
     //double quality = (double)count / (double)numChains; 
     //return quality;
     return count;
+}
+
+std::vector<std::string> getDnaS(const std::string& filename) {
+    std::vector<std::string> dnaChains;
+    std::string chain;
+    
+    std::ifstream file(filename);
+    if (!file.is_open()) {
+        std::cerr << "Error al abrir el archivo" << std::endl;
+        exit(1);
+    }
+
+    while (std::getline(file, chain)) {
+        // Eliminar saltos de línea y otros espacios en blanco
+        chain.erase(std::remove_if(chain.begin(), chain.end(), ::isspace), chain.end());
+        if (!chain.empty()) {
+            dnaChains.push_back(chain);
+        }
+    }
+
+    return dnaChains;
 }
