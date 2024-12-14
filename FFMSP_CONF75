@@ -19,4 +19,4 @@ declare -a CONF_BIN=(
         )
 ##Binary problems
 
-./ACOElite -i ${1}  ${CONF_BIN[$SLURM_ARRAY_TASK_ID]} >>"resultados75.csv"
+./ACOElite -i ${1}  ${CONF_BIN[$SLURM_ARRAY_TASK_ID]} >> "resultados_ACO/${2}_${SLURM_ARRAY_TASK_ID}"
