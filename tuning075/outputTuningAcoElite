@@ -1,0 +1,211 @@
+#------------------------------------------------------------------------------
+# irace: An implementation in R of (Elitist) Iterated Racing
+# Version: 3.5.6863679
+# Copyright (C) 2010-2020
+# Manuel Lopez-Ibanez     <manuel.lopez-ibanez@manchester.ac.uk>
+# Jeremie Dubois-Lacoste
+# Leslie Perez Caceres    <leslie.perez.caceres@ulb.ac.be>
+#
+# This is free software, and you are welcome to redistribute it under certain
+# conditions.  See the GNU General Public License for details. There is NO
+# WARRANTY; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+#
+# irace builds upon previous code from the race package:
+#     race: Racing methods for the selection of the best
+#     Copyright (C) 2003 Mauro Birattari
+#------------------------------------------------------------------------------
+# installed at: /home/shared/sisadapt2/R/x86_64-pc-linux-gnu-library/3.6/irace
+# called with:
+== irace == WARNING: A default scenario file '/home/shared/sisadapt2/FFMSP/tuning075/scenario.txt' has been found and will be read.
+batchmode
+sge,pbs,torque,slurm,htcondor
+# 2024-12-13 22:11:37 -03: Initialization
+# Elitist race
+# Elitist new instances: 1
+# Elitist limit: 2
+# nbIterations: 3
+# minNbSurvival: 3
+# nbParameters: 3
+# seed: 2024646672
+# confidence level: 0.95
+# budget: 1000
+# mu: 5
+# deterministic: FALSE
+
+# 2024-12-13 22:11:37 -03: Iteration 1 of 3
+# experimentsUsedSoFar: 0
+# remainingBudget: 1000
+# currentBudget: 333
+# nbConfigurations: 55
+# Markers:
+     x No test is performed.
+     c Configurations are discarded only due to capping.
+     - The test is performed and some configurations are discarded.
+     = The test is performed but no configuration is discarded.
+     ! The test is performed and configurations could be discarded but elite configurations are preserved.
+     . All alive configurations are elite and nothing is discarded
+
++-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
+| |   Instance|      Alive|       Best|       Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
++-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
+|x|          1|         55|         43|    -200.0000000|         55|00:16:05|   NA|  NA|    NA|
+|x|          2|         55|         42|    -197.0000000|        110|00:23:41|+0.93|0.96|0.1058|
+|x|          3|         55|         42|    -164.6666667|        165|00:24:01|+0.89|0.93|0.1412|
+|x|          4|         55|         42|    -148.5000000|        220|00:30:01|+0.89|0.92|0.1348|
+|-|          5|         14|         42|    -138.8000000|        275|00:32:04|+0.15|0.32|0.6606|
+|-|          6|          9|         42|    -149.0000000|        289|00:18:32|-0.11|0.07|0.3319|
+|=|          7|          9|         42|    -142.0000000|        298|00:18:02|-0.09|0.06|0.2794|
+|=|          8|          9|         42|    -149.2500000|        307|00:23:34|-0.00|0.12|0.3327|
++-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
+Best-so-far configuration:          42    mean value:     -149.2500000
+Description of the best-so-far configuration:
+   .ID. determinismo cantHormigas factorEvap .PARENT.
+42   42         0.85          440       0.05       NA
+
+# 2024-12-14 01:17:41 -03: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+   determinismo cantHormigas factorEvap
+42         0.85          440       0.05
+14         0.75          771       0.83
+13         0.82          915       0.58
+# 2024-12-14 01:17:41 -03: Iteration 2 of 3
+# experimentsUsedSoFar: 307
+# remainingBudget: 693
+# currentBudget: 346
+# nbConfigurations: 41
+# Markers:
+     x No test is performed.
+     c Configurations are discarded only due to capping.
+     - The test is performed and some configurations are discarded.
+     = The test is performed but no configuration is discarded.
+     ! The test is performed and configurations could be discarded but elite configurations are preserved.
+     . All alive configurations are elite and nothing is discarded
+
++-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
+| |   Instance|      Alive|       Best|       Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
++-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
+|x|          9|         41|         42|    -198.0000000|         41|00:23:06|   NA|  NA|    NA|
+|x|          7|         41|         42|    -149.0000000|         79|00:16:00|+0.21|0.60|0.7557|
+|x|          3|         41|         42|    -132.6666667|        117|00:20:04|+0.18|0.45|0.7775|
+|x|          6|         41|         42|    -149.5000000|        155|00:24:08|+0.17|0.38|0.7876|
+|-|          8|         30|         42|    -159.6000000|        193|00:18:32|+0.05|0.24|0.3675|
+|=|          1|         30|         42|    -166.1666667|        220|00:16:34|+0.09|0.24|0.4330|
+|-|          2|         17|         42|    -170.2857143|        247|00:17:05|+0.00|0.15|0.4097|
+|=|          4|         17|         42|    -161.5000000|        261|00:15:03|+0.00|0.13|0.3577|
+|=|          5|         17|         42|    -154.6666667|        275|00:13:02|+0.05|0.16|0.4057|
+|=|         10|         17|         42|    -159.2000000|        292|00:13:30|+0.05|0.15|0.4521|
++-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
+Best-so-far configuration:          42    mean value:     -159.2000000
+Description of the best-so-far configuration:
+   .ID. determinismo cantHormigas factorEvap .PARENT.
+42   42         0.85          440       0.05       NA
+
+# 2024-12-14 04:14:50 -03: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+   determinismo cantHormigas factorEvap
+42         0.85          440       0.05
+79         0.91          670       0.23
+86         0.92          589       0.22
+# 2024-12-14 04:14:51 -03: Iteration 3 of 3
+# experimentsUsedSoFar: 599
+# remainingBudget: 401
+# currentBudget: 401
+# nbConfigurations: 39
+# Markers:
+     x No test is performed.
+     c Configurations are discarded only due to capping.
+     - The test is performed and some configurations are discarded.
+     = The test is performed but no configuration is discarded.
+     ! The test is performed and configurations could be discarded but elite configurations are preserved.
+     . All alive configurations are elite and nothing is discarded
+
++-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
+| |   Instance|      Alive|       Best|       Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
++-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
+|x|         11|         39|         42|    -100.0000000|         39|00:16:35|   NA|  NA|    NA|
+|x|          6|         39|         42|    -150.0000000|         75|00:22:33|+1.00|1.00|0.0000|
+|x|          2|         39|        100|    -165.3333333|        111|00:23:34|+0.00|0.33|0.3248|
+|x|          1|         39|        112|    -174.0000000|        147|00:21:07|-0.02|0.24|0.4808|
+|=|          4|         39|        112|    -159.2000000|        183|00:21:05|-0.01|0.19|0.3859|
+|=|         10|         39|        112|    -166.0000000|        219|00:21:05|+0.04|0.20|0.4342|
+|=|          3|         39|        112|    -156.5714286|        255|00:16:02|+0.03|0.17|0.3798|
+|-|          8|         22|        112|    -162.0000000|        291|00:14:04|-0.05|0.09|0.3792|
+|=|          7|         22|        112|    -155.1111111|        310|00:12:00|-0.04|0.08|0.3347|
+|=|          9|         22|        112|    -159.2000000|        329|00:07:02|-0.02|0.08|0.3968|
+|=|          5|         22|        112|    -153.8181818|        348|00:07:02|+0.00|0.09|0.4427|
+|=|         12|         22|        112|    -149.3333333|        370|00:07:58|+0.00|0.08|0.4050|
++-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
+Best-so-far configuration:         112    mean value:     -149.3333333
+Description of the best-so-far configuration:
+    .ID. determinismo cantHormigas factorEvap .PARENT.
+112  112          0.8          689       0.23       79
+
+# 2024-12-14 07:25:00 -03: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+    determinismo cantHormigas factorEvap
+112         0.80          689       0.23
+42          0.85          440       0.05
+79          0.91          670       0.23
+# 2024-12-14 07:25:00 -03: Iteration 4 of 4
+# experimentsUsedSoFar: 969
+# remainingBudget: 31
+# currentBudget: 31
+# nbConfigurations: 5
+# Markers:
+     x No test is performed.
+     c Configurations are discarded only due to capping.
+     - The test is performed and some configurations are discarded.
+     = The test is performed but no configuration is discarded.
+     ! The test is performed and configurations could be discarded but elite configurations are preserved.
+     . All alive configurations are elite and nothing is discarded
+
++-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
+| |   Instance|      Alive|       Best|       Mean best| Exp so far|  W time|  rho|KenW|  Qvar|
++-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
+|x|         13|          5|         42|    -196.0000000|          5|00:07:05|   NA|  NA|    NA|
+|x|         12|          5|         42|    -148.0000000|          7|00:03:59|+0.00|0.50|0.4000|
+|x|          6|          5|         42|    -165.3333333|          9|00:03:01|+0.00|0.33|0.2667|
+|x|          4|          5|         42|    -149.0000000|         11|00:02:59|+0.00|0.25|0.2000|
+|=|          2|          5|        112|    -158.0000000|         13|00:02:59|+0.11|0.29|0.2550|
+|=|          5|          5|        112|    -148.3333333|         15|00:01:28|+0.09|0.24|0.2233|
+|=|          8|          5|        112|    -155.7142857|         17|00:01:30|+0.08|0.21|0.1976|
+|=|          7|          5|        112|    -148.7500000|         19|00:01:02|+0.07|0.18|0.1768|
+|-|         10|          4|        112|    -154.4444444|         21|00:01:08|+0.07|0.17|0.2338|
+|=|          9|          4|         42|    -158.9000000|         22|00:01:20|+0.14|0.22|0.2627|
+|=|          3|          4|         42|    -153.5454545|         23|00:01:00|+0.12|0.20|0.2422|
+|=|         11|          4|         42|    -149.0833333|         24|00:01:00|+0.11|0.19|0.2245|
+|=|          1|          4|        112|    -152.7692308|         25|00:01:06|+0.10|0.17|0.2598|
+|=|         14|          4|         42|    -156.2857143|         29|00:01:57|+0.03|0.10|0.3127|
++-+-----------+-----------+-----------+----------------+-----------+--------+-----+----+------+
+Best-so-far configuration:          42    mean value:     -156.2857143
+Description of the best-so-far configuration:
+   .ID. determinismo cantHormigas factorEvap .PARENT.
+42   42         0.85          440       0.05       NA
+
+# 2024-12-14 07:56:43 -03: Elite configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+    determinismo cantHormigas factorEvap
+42          0.85          440       0.05
+112         0.80          689       0.23
+79          0.91          670       0.23
+# 2024-12-14 07:56:43 -03: Stopped because there is not enough budget left to race more than the minimum (3)
+# You may either increase the budget or set 'minNbSurvival' to a lower value
+# Iteration: 5
+# nbIterations: 5
+# experimentsUsedSoFar: 998
+# timeUsed: 0
+# remainingBudget: 2
+# currentBudget: 2
+# number of elites: 3
+# nbConfigurations: 2
+# Total CPU user time: 99.965, CPU sys time: 76.82, Wall-clock time: 35105.94
+# Best configurations (first number is the configuration ID; listed from best to worst according to the sum of ranks):
+    determinismo cantHormigas factorEvap
+42          0.85          440       0.05
+112         0.80          689       0.23
+79          0.91          670       0.23
+# Best configurations as commandlines (first number is the configuration ID; same order as above):
+42   -a 0.85 -ant 440 -e 0.05
+112  -a 0.8 -ant 689 -e 0.23
+79   -a 0.91 -ant 670 -e 0.23
+
+
+# Testing of elite configurations: 1
+# Testing iteration configurations: FALSE
+# 2024-12-14 07:56:43 -03: No test instances, skip testing
