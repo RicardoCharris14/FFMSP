@@ -27,6 +27,5 @@
 
 # 1:            2:                   3: 4:      5:
 determinismo    "-a "                r  (0.0, 1.0)
-populationSize  "-psize "            i  (30, 200)
-tournamentSize  "-tsize "            i  (3, 20)
-gradoMutacion   "-mrate "            r  (0.0, 0.15)
+cantHormigas    "-ant "              i  (50, 1000)
+factorEvap      "-e "                r  (0.0, 0.99)

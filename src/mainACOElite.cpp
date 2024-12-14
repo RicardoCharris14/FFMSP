@@ -31,10 +31,8 @@ int main(int argc, char* argv[]){
             determinism = atof(argv[++i]);
         } else if (strcmp(argv[i], "-e") == 0 && i + 1 < argc){
             evaporation = atof(argv[++i]);
-        } else if(strcmp(argv[i], "-tuning") == 0 && i + 1 < argc){
-            if(strcmp(argv[i+1], "1") == 0){
-                tuning = true;
-            }
+        } else if(strcmp(argv[i], "-tuning") == 0){
+            tuning = true;
         } else {
             std::cerr << "Argumento desconocido: " << argv[i] << std::endl;
             exit(1);

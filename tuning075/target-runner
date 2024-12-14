@@ -24,7 +24,7 @@ error() {
 }
 
 tmpfile=$(mktemp)
-EXE=../algEvolutivo
+EXE=../ACOElite
 FIXED_PARAMS="-t 60 -th 0.75 -tuning "
 CANDIDATE=$1
 INSTANCEID=$2

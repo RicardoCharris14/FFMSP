@@ -108,6 +108,10 @@ std::string ACOElite(std::vector<std::string> chains, int antsNumber, float evap
         std::chrono::duration<double> elapsedTime = now - start;
         double actualTime = elapsedTime.count();
         if (actualTime >= time){
+            if(tuning){
+                std::cout << bestQuality * -1 << std::endl;
+                return bestSolution;
+            }
             std::cout << bestTime << " " << bestQuality << std::endl;
             return bestSolution;
         }
