@@ -14,14 +14,9 @@
 
 #Declaring configurations
 declare -a CONF_BIN=(
-                                 " -t 10 -th 0.75 -a 0.84 -psize 88 -tsize 3 -mrate 0.13 -tuning" #  Tuning #  
+                                 " -t 10 -th 0.75 -a 0.85 -ant 440 -e 0.05 -tuning" #  Tuning #  
 
         )
 ##Binary problems
 
-#for i in {1..10}
-#do
-./algEvolutivo -i ${1}  ${CONF_BIN[$SLURM_ARRAY_TASK_ID]} >>"resultados75.csv"
-#done
-
-~        
+./ACOElite -i ${1}  ${CONF_BIN[$SLURM_ARRAY_TASK_ID]} >>"resultados75.csv"

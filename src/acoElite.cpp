@@ -41,7 +41,7 @@ std::string ACOElite(std::vector<std::string> chains, int antsNumber, float evap
             bestSolution = solution;
             bestTime = actualTime;
             if (!tuning){
-                std::cout << bestTime << " " << bestQuality << std::endl;
+                std::cout << bestQuality << " " << bestTime << std::endl;
             }
             
         }
@@ -97,7 +97,7 @@ std::string ACOElite(std::vector<std::string> chains, int antsNumber, float evap
                 bestSolution = solution;
                 bestTime = actualTime;
                 if (!tuning){
-                    std::cout << bestTime << " " << bestQuality << std::endl;
+                    std::cout << bestQuality << " " << bestTime << std::endl;
                 }
                 
             }
@@ -109,10 +109,10 @@ std::string ACOElite(std::vector<std::string> chains, int antsNumber, float evap
         double actualTime = elapsedTime.count();
         if (actualTime >= time){
             if(tuning){
-                std::cout << bestQuality * -1 << std::endl;
+                std::cout << bestQuality  << " " << bestTime << std::endl;
                 return bestSolution;
             }
-            std::cout << bestTime << " " << bestQuality << std::endl;
+            std::cout << bestQuality << " " << bestTime << std::endl;
             return bestSolution;
         }
     }
